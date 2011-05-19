@@ -1,8 +1,15 @@
+MooTools HTML5
+--------------
 
-MooTools Edge
+To provide all browsers with the power of HTML5. This means support for:
 
-This repository is for MooTools *contributors* that are not afraid to make new things. All users should download MooTools Edge from MooTools.net, but since it isn't offered there yet, you'll have to get it here - we know, that blows.
+* Canvas
+* Drag & Drop
+* Messaing
+* Web Workers
+* Web Sockets
+* ...
 
-See the documentation files included in this repo. We don't have anything on the MooTools Wiki for you, because they rest of the group says Edge isn't *official* yet.
-
-
+Support Matrix
+==============
+Please take a look at the [Support Matrix](#) to see what HTML5 features have not been added. 
