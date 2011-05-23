@@ -28,7 +28,7 @@ provides: WebWorker
 		
 		WebWorker = new Class({
 			
-			Implements: [Events, Options],
+			Implements: [Options, Events],
 			
 			options: {
 				url: 'WebWorker.js',
@@ -36,13 +36,16 @@ provides: WebWorker
 			},
 			
 			initialize: function(options){
-				thread = this;
 				this.setOptions(options);
-				this.require = Array.from(this.options.require);
 				this.worker = new Worker(this.options.url);
-				['message', 'error'].each(function(type){
-					thread.worker['on' + type] = function(){ thread.fireEvent(type, arguments) };
-				});
+				this.require = Array.from(this.options.require);
+				this.attach();
+			},
+			
+			attach: function(){
+				var self = this;
+				this.worker.onerror = function(){ self.fireEvent('error', arguments) };
+				this.worker.onmessage = function(obj){ self.fireEvent('complete', obj.data) };
 			},
 			
 			send: function(work){
@@ -62,23 +65,18 @@ provides: WebWorker
 		
 	}
 	else {
-		
+		onerror = function(event){ throw event.data };
 		onmessage = function(msg){
 			var work = msg.data,
 				fn = work.fn,
 				args = fn.split('(')[1].split(')')[0].replace(/\s/g,'').split(',') || [];
-			
-			if(work.require.length) importScripts.apply(this, work.require);
-			
+				
 			args.push(fn.substring(fn.indexOf('{') + 1, fn.lastIndexOf('}')));
-			
+			if(work.require.length) importScripts.apply(this, work.require);	
 			postMessage(
 				Function.apply(null, args).apply((typeof work.bind != 'undefined') ? work.bind : this, work.arguments)
 			);
-		}
-		
-		onerror = function(event){ throw event.data }
-		
+		}	
 	}
 
 })();
