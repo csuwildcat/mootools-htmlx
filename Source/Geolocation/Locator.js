@@ -23,7 +23,7 @@ var Locator = new Class({
 			
 	Implements: [Options, Events],
 	
-	Binds: ['update'],
+	Binds: ['update', 'error'],
 	
 	options: {
 		watch: false,
@@ -56,11 +56,11 @@ var Locator = new Class({
 	update: function(position){
 		this.location = position;
 		this.fireEvent('change', position);
-		return 
+		return this
 	},
 	
 	error: function(error){
-		this.fireEvent(this.errors[error.code]);
+		this.fireEvent(this.errors[error.code], error);
 		return this;
 	},
 	
