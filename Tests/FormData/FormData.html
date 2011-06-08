@@ -1,0 +1,23 @@
+
+<script src="/depender/build?require=HTMLX/FormData"></script>
+
+<script>
+var formData = new FormData();
+formData.append('yo', 'hello');
+formData.append('url[]', 'first');
+formData.append('url[]', 'second');
+
+var xhr = new XMLHttpRequest();
+xhr.open("POST", "/ajax_html_echo/");
+
+if (formData.shim){
+	xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+	formData = formdata.toQueryString();
+}
+
+console.log(formData);
+
+xhr.send(formData);
+
+
+</script>

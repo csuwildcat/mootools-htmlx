@@ -1,0 +1,18 @@
+name: "HTMLX"
+
+exports: "mootools-htmlx.js"
+
+web: "[mootools.net](http://mootools.net)"
+
+description: "MooTools Future HTML5"
+
+license: "[MIT License](http://mootools.net/license.txt)"
+
+copyright: "&copy; [MooTools](http://mootools.net)"
+
+authors: "[The MooTools development team](http://mootools.net/developers)"
+
+version: "1.3-wip"
+
+sources:
+  - "Source/FormData/FormData.js"
