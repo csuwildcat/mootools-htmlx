@@ -1,31 +1,29 @@
 (function (){
-    
-var collected = {}, storage = {};
 
-var get = function(uid){
-    return (storage[uid] || (storage[uid] = {}));
-};
+var collected = {},
+    storage = {},
+    get = function(uid){
+        return (storage[uid] || (storage[uid] = {}));
+    },
+    store = function(item){
+        if (item.dataset)
+            return item.dataset
 
-var store = function(item){
-    if (item.dataset)
-        return item.dataset
-    
-    return get($uid(item));
-};
-
-var clean = function(item){
-    var uid = item.uid;
-    if (item.removeEvents) item.removeEvents();
-    if (item.clearAttributes) item.clearAttributes();
-    if (uid != null){
-        delete collected[uid];
-        delete storage[uid];
-    }
-    return item;
-};
+        return get($uid(item));
+    },
+    clean = function(item){
+        var uid = item.uid;
+        if (item.removeEvents) item.removeEvents();
+        if (item.clearAttributes) item.clearAttributes();
+        if (uid != null){
+            delete collected[uid];
+            delete storage[uid];
+        }
+        return item;
+    };
 
 [Element, Window, Document].invoke('implement', {
-    
+
     addListener: function(type, fn){
         if (type == 'unload'){
             var old = fn, self = this;
@@ -40,14 +38,14 @@ var clean = function(item){
         else this.attachEvent('on' + type, fn);
         return this;
     },
-    
+
     destroy: function(){
         var children = clean(this).getElementsByTagName('*');
         Array.each(children, clean);
         Element.dispose(this);
-        return null;    
+        return null;
     },
-    
+
     retrieve: function(property, dflt){
         var storage = store(this), prop = storage[property];
         if (dflt != null && prop == null) prop = storage[property] = dflt;
@@ -65,7 +63,7 @@ var clean = function(item){
         delete storage[property];
         return this;
     }
-    
+
 });
 
 /*<ltIE9>*/
