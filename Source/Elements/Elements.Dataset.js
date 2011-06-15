@@ -7,6 +7,7 @@ var hasData = (function(){
 }());
 
 [Element, Document, Window].invoke('implement', {
+
     setData: (hasData ? function(key, val){
         this.dataset[key.camelCase()] = val;
         return this;
@@ -43,6 +44,7 @@ var hasData = (function(){
     removeData: function(key){
         return this.set('data-' + key.hyphenate(), null);
     }
+    
 });
 
 }());
