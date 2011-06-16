@@ -23,29 +23,52 @@ IDBObjectStore.extend = Object.extend;
 
 new Type('IDBObjectStore', IDBObjectStore);
 
-IDBObjectStore.implement({
-	store: function(data){
-		this.put((typeof data == 'function') ? data.call(this, object) : data);
-		return this;
-	},
-	
-	retrieve: function(key, fn){
-		this.get(key).onsuccess = fn.bind(this);
-		return this;
-	},
-	
-	each: function(fn, bind){
-		bind = (typeof bind === 'undefined') ? this : bind;
-		this.openCursor().onsuccess =  function(e) {
-			var data = e.target.result;
-			if(data) {
-				console.log(data.key, data.value, data);
-				fn.call(bind, data.value, data.key, data);
-				data.continue();
-			}
-		};
-		return this;
-	}
+IDBObjectStore.implement(new Chain).implement({
+		store: function(data){
+			this.put((typeof data == 'function') ? data.call(this) : data);
+			return this;
+		},
+		
+		retrieve: function(key, fn){
+			var self = this;
+			this.get(key).onsuccess = function(event){
+				fn.call(self, event, event.target.result);
+				self.callChain();
+			};
+			return this;
+		},
+		
+		each: function(fn, bind, internal){
+			var self = this,
+				returned = [],
+				bind = (typeof bind === 'undefined') ? this : bind;
+				
+			this.openCursor().onsuccess = function(e) {
+				var data = e.target.result;
+				if(data) {
+					returned.push(fn.call(bind, data.value, data.key, data));
+					data.continue();
+				}
+				else{
+					if(internal) internal.call(self, returned);
+					self.callChain();
+				}
+			};
+			
+			return this;
+		},
+		
+		getKeys: function(fn){
+			this.each(function(value, key){
+				return key;
+			}, this, fn);
+		},
+		
+		getValues: function(fn){
+			this.each(function(value){
+				return value;
+			}, this, fn);
+		}
 });
 
 Database = new Class({
@@ -54,7 +77,7 @@ Database = new Class({
 	
 	options: {
 		version: '0.1',
-		schema: [ // This schema is an example and should be removed before release
+		schema: [  // This schema is an example and should be removed before release
 			{
 				name: 'users',
 				options: {
@@ -86,7 +109,6 @@ Database = new Class({
 	initialize: function(name, options){
 		this.setOptions(options);
 		this.name = name;
-		this.cache = {};
 		this.open();
 	},
 	
@@ -119,7 +141,8 @@ Database = new Class({
 		};
 		
 		request.onsuccess = function(event) {
-			var db = request.result
+			var db = request.result;
+				db.instance = self;
 				self.db = db;
 			
 			db.onversionchange = function(e){
@@ -147,10 +170,6 @@ Database = new Class({
 				});
 			}
 			
-			Object.each(db.objectStoreNames, function(name){
-				if(!self.cache[name]) self.cache[name] = self.access(name);
-			});
-			
 			self.fireEvent('open', event);
 		}; 
 	},
@@ -162,7 +181,7 @@ Database = new Class({
 	},
 	
 	create: function(object, options){
-		return this.cache[object] = (!this.db.objectStoreNames.contains(object)) ? this.db.createObjectStore(object, options || {}) : this.access(object);
+		return (!this.db.objectStoreNames.contains(object)) ? this.db.createObjectStore(object, options || {}) : this.access(object);
 	},
 	
 	access: function(object){
