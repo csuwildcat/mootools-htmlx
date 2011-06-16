@@ -18,7 +18,7 @@ var hasData = (function(){
     getData: (hasData ? function(key){
         return this.dataset[key.camelCase()]
     } : function(key){
-        return this.get('data-' + key.hyphenate());
+        return this.getProperty('data-' + key.hyphenate());
     }).overloadGetter(),
 
     getDataset: hasData ? function(){
@@ -42,7 +42,7 @@ var hasData = (function(){
     },
 
     removeData: function(key){
-        return this.set('data-' + key.hyphenate(), null);
+        return this.removeProperty('data-' + key.hyphenate());
     }
     
 });
