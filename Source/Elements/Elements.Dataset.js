@@ -41,7 +41,7 @@ var hasData = (function(){
         return collection;
     },
 
-    removeData: function(key){
+    eraseData: function(key){
         return this.removeProperty('data-' + key.hyphenate());
     }
     
