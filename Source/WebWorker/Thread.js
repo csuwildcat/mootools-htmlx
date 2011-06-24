@@ -26,30 +26,42 @@ provides: Thread
 	
 	if(!isWorker) {
 	
-		Thread = new Class({
+		this.Thread = new Class({
 			
 			Implements: [Options, Events, Chain],
 			
 			options: {
-				url: 'js/Thread.js',
+				file: 'Thread',
 				require: null
 			},
 			
 			initialize: function(options){
 				this.setOptions(options);
-				this.worker = new Worker(this.options.url);
+				this.setUrl();
+				this.worker = new Worker(this.url);
 				this.require = Array.from(this.options.require);
 				this.attach();
 			},
 			
+			setUrl: function(){
+				var self = this, sources = $$('script').get('src').clean();
+				this.url = sources.each(function(e, i, a){
+					if(e.split('.js')[0].split('/').getLast() == self.options.file) a[0] = sources[i];
+				})[0];
+				return this;
+			},
+			
 			attach: function(){
-				this.worker.onerror = function(){ self.fireEvent('error', arguments) };
+				var self = this;
+				this.worker.onerror = function(){
+					self.fireEvent('error', arguments)
+				};
 				this.worker.onmessage = function(msg){
 					var data = msg.data;
-					this.fireEvent(msg.data.id, msg.data.response)
-						.fireEvent('complete', msg.data.response)
-						.removeEvents(msg.data.id);
-				}.bind(this);
+					self.fireEvent(data.id, data.response)
+						.fireEvent('complete', data.response)
+						.removeEvents(data.id);
+				};
 				return this;
 			},
 			

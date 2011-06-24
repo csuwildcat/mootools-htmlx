@@ -19,16 +19,13 @@ provides: Function.thread
 ...
 */
 
-Function.implement({
-	thread: function(options){
-		var self = this,
-			thread = new Thread(options);
-			
-		return function(){
-			thread.send({
-				fn: self,
-				arguments: arguments
-			});
-		}
-	}
+Function.implement('thread', function(options){
+	var self = this, thread = new Thread(options);
+
+	return function(){
+		thread.send({
+			fn: self,
+			arguments: arguments
+		});
+	};
 });
