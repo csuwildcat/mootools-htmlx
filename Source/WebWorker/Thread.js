@@ -88,6 +88,17 @@ provides: Thread
 			
 		});
 		
+		Function.implement('thread', function(options){
+			var self = this, thread = new Thread(options);
+
+			return function(){
+				thread.send({
+					fn: self,
+					arguments: arguments
+				});
+			};
+		});
+	
 	}
 	else {
 		onerror = function(event){ throw event.data };
