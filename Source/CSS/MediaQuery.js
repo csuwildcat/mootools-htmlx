@@ -3,7 +3,7 @@
 
 name: MediaQuery
 
-description: An augmented version of the Web Worker API.
+description: A JavaScript API for testing and interacting with CSS Media Queries
 
 license: MIT-style license.
 
