@@ -36,9 +36,9 @@ var MediaQuery = new Class({
 			text: '#media_query_element{ z-index: 0; }'
 		}).inject(document.head);
 		
-		this.options.queries.each(this.run);
-		
-		return this;
+		Object.each(this.options.queries, function(v, k){
+           		this.test(k, v);
+        	}, this);
 	},
 	
 	test: function(expression, fn){
