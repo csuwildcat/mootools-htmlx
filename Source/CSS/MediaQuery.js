@@ -24,7 +24,7 @@ var MediaQuery = new Class({
 	Implements: [Options, Events],
 	
 	options: {
-		queries: []
+		queries: {}
 	},
 	
 	initialize: function(options){
