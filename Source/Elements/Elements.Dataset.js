@@ -1,3 +1,21 @@
+/*
+---
+
+name: Element.Dataset
+
+description: Contains Element methods for dealing data attributes.
+
+license: MIT-style license.
+
+authors: Garrick Cheung
+
+requires: Element
+
+provides: Element.Dataset
+
+...
+*/
+
 (function(){
 
 var hasData = (function(){
@@ -44,7 +62,7 @@ var hasData = (function(){
     eraseData: function(key){
         return this.removeProperty('data-' + key.hyphenate());
     }
-    
+
 });
 
 }());
